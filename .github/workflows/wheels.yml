@@ -1,5 +1,12 @@
 name: wheels
 on:
+  pull_request:
+    branches: [ main ]
+    inputs:
+      upload:
+        description: 'Upload wheels to PyPI? (0: no, 1: yes)'
+        required: true
+        default: '0'
   workflow_dispatch:
     inputs:
       upload:
@@ -19,6 +26,10 @@ env:
   MACOSX_DEPLOYMENT_TARGET: 14.0
   # make sure slangpy wheel is build with testing data + corrected project directory
   BUILD_RELEASE_WHEEL: 1
+  BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
+  P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
+  KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+  CIBW_REPAIR_WHEEL_COMMAND_MACOS: "bash .github/scripts/sign_macos_bins.sh {wheel} {dest_dir}"
 
 jobs:
   wheels:
